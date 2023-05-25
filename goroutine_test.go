@@ -2,6 +2,7 @@ package golanggoroutine
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -66,4 +67,69 @@ func TestInAndOutChannel(t *testing.T) {
 	go OnlyOut(channel)
 
 	time.Sleep(2 * time.Second)
+}
+
+func TestBufferedChannel(t *testing.T) {
+	channel := make(chan any, 3)
+	defer close(channel)
+
+	go func() {
+		channel <- "Suharto"
+		channel <- "Raya"
+		channel <- "Hambu"
+	}()
+
+	go func() {
+		fmt.Println(<-channel)
+		fmt.Println(<-channel)
+		// fmt.Println(<-channel)
+	}()
+
+	time.Sleep(2 * time.Second)
+	fmt.Println("selesai")
+
+}
+
+func TestRangeChannel(t *testing.T) {
+	channel := make(chan any)
+
+	go func() {
+		for i := 0; i < 5; i++ {
+			channel <- "Perulangan ke " + strconv.Itoa(i)
+		}
+		close(channel)
+	}()
+
+	for data := range channel {
+		fmt.Println("Meterima data ke ", data)
+	}
+
+	fmt.Println("selesai")
+}
+
+func TestSelectChannel(t *testing.T) {
+	channel1 := make(chan any)
+	channel2 := make(chan any)
+
+	defer close(channel1)
+	defer close(channel2)
+
+	count := 0
+
+	go GiveMeResponse(channel1)
+	go GiveMeResponse(channel2)
+	for {
+		select {
+		case data := <-channel1:
+			fmt.Println("channel 1 ", data)
+			count++
+		case data := <-channel2:
+			fmt.Println("channel 2 ", data)
+			count++
+		}
+
+		if count == 2 {
+			break
+		}
+	}
 }
