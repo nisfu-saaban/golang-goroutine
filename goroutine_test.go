@@ -126,6 +126,8 @@ func TestSelectChannel(t *testing.T) {
 		case data := <-channel2:
 			fmt.Println("channel 2 ", data)
 			count++
+		default:
+			fmt.Println("Menunggu data")
 		}
 
 		if count == 2 {
