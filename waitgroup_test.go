@@ -25,3 +25,25 @@ func TestWaitGroup(t *testing.T) {
 	wg.Wait()
 	fmt.Println("All Task Complete")
 }
+
+var counter = 0
+
+func OnlyOnce() {
+	counter++
+}
+
+func TestOnlyOnce(t *testing.T) {
+	once := sync.Once{}
+	wg := sync.WaitGroup{}
+
+	for i := 0; i < 100; i++ {
+		go func() {
+			wg.Add(1)
+			once.Do(OnlyOnce)
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+	fmt.Println("counter ", counter)
+}
