@@ -10,7 +10,7 @@ func TestWaitGroup(t *testing.T) {
 	var wg sync.WaitGroup
 
 	numWorkers := 5
-	taskQueue := make(chan int, 10)
+	taskQueue := make(chan int, 3)
 
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
